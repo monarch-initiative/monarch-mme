@@ -8,7 +8,9 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import play.api.libs.json._
 import akka.actor.Props
+import play.api.libs.functional.syntax._
 import play.api.libs.concurrent.Akka
+import models.inandout._
 
 object Application extends Controller {
 
@@ -18,29 +20,26 @@ object Application extends Controller {
     Ok(views.html.index("Your new application is ready."))
   }
 
-  def mmeMatch() = Action(parse.json) {
+  def mmeMatch() = Action(BodyParsers.parse.json) {
     implicit request =>
-      val json = request.body
-      val id = json \ "id"
-      val oberservedFeatures = {
-        val features = json \ "features"
-        val idAndObservation = {
-          val ids = (features \\ "id").map(_.as[String])
-          val observations = (features \\ "observed").map(_.as[String])
-          ids zip observations
-        }
-        idAndObservation.filter(_ match {
-          case (id, observation) => observation == "yes"
+      val matchQuery = request.body.validate[MatchQuery]
+
+      matchQuery.fold(
+        errors => {
+          BadRequest(Json.obj("status" -> "Bad Request", "message" -> JsError.toFlatJson(errors)))
+        },
+        matchQueryObj => {
+          val onlyIds = matchQueryObj.features.map(_.id)
+
+          if (matchQueryObj.responseType == "inline") {
+            Ok(MmeRequester.fetch("noQueryId", onlyIds))
+          } else {
+            val queryId = java.util.UUID.randomUUID.toString
+            concurrentMap.put(queryId, "No data yet")
+            Akka.system.actorOf(Props[MmeWorker]) ! MmeWorkerMessage(queryId, onlyIds, concurrentMap)
+            Ok(Json.obj("queryId" -> queryId))
+          }
         })
-      }
-      val onlyIds = oberservedFeatures.map(_._1).toSeq
-
-      println(onlyIds)
-      val queryId = java.util.UUID.randomUUID.toString
-      concurrentMap.put(queryId, "")
-      Akka.system.actorOf(Props[Worker]) ! MmeMessage(queryId, onlyIds, concurrentMap)
-
-      Ok(Json.obj("queryId" -> queryId))
   }
 
   def matchResults() = Action(parse.json) {
@@ -48,7 +47,7 @@ object Application extends Controller {
       val json = request.body
       val queryId = (json \ "queryId").as[String]
       val data = concurrentMap.get(queryId)
-      Ok(data.getOrElse(""))
+      Ok(data.getOrElse("Invalid queryId"))
   }
 
 }

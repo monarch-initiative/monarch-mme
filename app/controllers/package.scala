@@ -12,10 +12,17 @@ import models.inandout._
 
 package object controllers {
 
+  implicit val ResponseFeatureWrites = new Writes[ResponseFeature] {
+    def writes(responseFeature: ResponseFeature) = Json.obj(
+      "id" -> responseFeature.id,
+      "label" -> responseFeature.label)
+  }
+
   implicit val mmeResultWrites = new Writes[MmeResult] {
     def writes(mmeResult: MmeResult) = Json.obj(
       "id" -> mmeResult.id,
-      "label" -> mmeResult.label)
+      "label" -> mmeResult.label,
+      "features" -> mmeResult.features)
   }
 
   implicit val mmeResponseWrites = new Writes[MmeResponse] {
@@ -23,7 +30,7 @@ package object controllers {
       "queryId" -> mmeResponse.queryId,
       "results" -> mmeResponse.mmeResults)
   }
-  
+
   implicit val featureReads: Reads[Feature] = (
     (JsPath \ "id").read[String] and
     (JsPath \ "observed").read[String])(Feature.apply _)

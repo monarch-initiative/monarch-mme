@@ -22,32 +22,34 @@ object Application extends Controller {
 
   def mmeMatch() = Action(BodyParsers.parse.json) {
     implicit request =>
-      val matchQuery = request.body.validate[MatchQuery]
-
-      matchQuery.fold(
-        errors => {
-          BadRequest(Json.obj("status" -> "Bad Request", "message" -> JsError.toFlatJson(errors)))
-        },
-        matchQueryObj => {
-          val onlyIds = matchQueryObj.features.map(_.id)
-
-          if (matchQueryObj.responseType == "inline") {
-            Ok(MmeRequester.fetch("noQueryId", onlyIds))
-          } else {
-            val queryId = java.util.UUID.randomUUID.toString
-            concurrentMap.put(queryId, "No data yet")
-            Akka.system.actorOf(Props[MmeWorker]) ! MmeWorkerMessage(queryId, onlyIds, concurrentMap)
-            Ok(Json.obj("queryId" -> queryId))
-          }
-        })
+//      val matchQuery = request.body.validate[MatchQuery]
+//
+//      matchQuery.fold(
+//        errors => {
+//          BadRequest(Json.obj("status" -> "Bad Request", "message" -> JsError.toFlatJson(errors)))
+//        },
+//        matchQueryObj => {
+//          val onlyIds = matchQueryObj.features.map(_.id)
+//
+//          if (matchQueryObj.responseType == "inline") {
+//            Ok(MmeRequester.fetch("noQueryId", onlyIds))
+//          } else {
+//            val queryId = java.util.UUID.randomUUID.toString
+//            concurrentMap.put(queryId, "No data yet")
+//            Akka.system.actorOf(Props[MmeWorker]) ! MmeWorkerMessage(queryId, onlyIds, concurrentMap)
+//            Ok(Json.obj("queryId" -> queryId))
+//          }
+//        })
+      Ok("")
   }
 
   def matchResults() = Action(parse.json) {
     implicit request =>
-      val json = request.body
-      val queryId = (json \ "queryId").as[String]
-      val data = concurrentMap.get(queryId)
-      Ok(data.getOrElse("Invalid queryId"))
+//      val json = request.body
+//      val queryId = (json \ "queryId").as[String]
+//      val data = concurrentMap.get(queryId)
+//      Ok(data.getOrElse("Invalid queryId"))
+      Ok("")
   }
 
 }

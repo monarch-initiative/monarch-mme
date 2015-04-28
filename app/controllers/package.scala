@@ -12,23 +12,80 @@ import models.inandout._
 
 package object controllers {
 
-  implicit val ResponseFeatureWrites = new Writes[ResponseFeature] {
-    def writes(responseFeature: ResponseFeature) = Json.obj(
-      "id" -> responseFeature.id,
-      "label" -> responseFeature.label)
+  implicit val typeInfoWrites = new Writes[TypeInfo] {
+    def writes(typeInfo: TypeInfo) = Json.obj(
+      "id" -> typeInfo.id,
+      "label" -> typeInfo.label)
+  }
+  implicit val variantWrites = new Writes[Variant] {
+    def writes(variant: Variant) = Json.obj(
+      "assembly" -> variant.assembly,
+      "referenceName" -> variant.referenceName,
+      "start" -> variant.start,
+      "end" -> variant.end,
+      "referenceBases" -> variant.referenceBases,
+      "alternateBases" -> variant.alternateBases)
+  }
+  implicit val geneWrites = new Writes[Gene] {
+    def writes(gene: Gene) = Json.obj(
+      "id" -> gene.id)
   }
 
-  implicit val mmeResultWrites = new Writes[MmeResult] {
-    def writes(mmeResult: MmeResult) = Json.obj(
-      "id" -> mmeResult.id,
-      "label" -> mmeResult.label,
-      "features" -> mmeResult.features)
+  implicit val genomicFeatureWrites = new Writes[GenomicFeature] {
+    def writes(genomicFeature: GenomicFeature) = Json.obj(
+      "gene" -> genomicFeature.gene,
+      "variant" -> genomicFeature.variant,
+      "zygosity" -> genomicFeature.zygosity,
+      "type" -> genomicFeature.typeInfo)
+  }
+
+  implicit val featureWrites = new Writes[Feature] {
+    def writes(feature: Feature) = Json.obj(
+      "id" -> feature.id,
+      "observed" -> feature.observed,
+      "ageOfOnset" -> feature.ageOfOnset)
+  }
+
+  implicit val disorderWrites = new Writes[Disorder] {
+    def writes(disorder: Disorder) = Json.obj(
+      "id" -> disorder.id)
+  }
+
+  implicit val contactWrites = new Writes[Contact] {
+    def writes(contact: Contact) = Json.obj(
+      "name" -> contact.name,
+      "institution" -> contact.institution,
+      "href" -> contact.href)
+  }
+
+  implicit val patientWrites = new Writes[Patient] {
+    def writes(patient: Patient) = Json.obj(
+      "id" -> patient.id,
+      "label" -> patient.label,
+      "contact" -> patient.contact,
+      "species" -> patient.species,
+      "sex" -> patient.sex,
+      "ageOfOnset" -> patient.ageOfOnset,
+      "inheritanceMode" -> patient.inheritanceMode,
+      "disorders" -> patient.disorders,
+      "features" -> patient.features,
+      "genomicFeatures" -> patient.genomicFeatures)
+  }
+
+  implicit val scoreWrites = new Writes[PatientScore] {
+    def writes(patientScore: PatientScore) = Json.obj(
+      "patient" -> patientScore.patient)
+  }
+
+  implicit val resultWrites = new Writes[models.inandout.Result] {
+    def writes(result: models.inandout.Result) = Json.obj(
+      "score" -> result.score,
+      "patient" -> result.patient)
   }
 
   implicit val mmeResponseWrites = new Writes[MmeResponse] {
     def writes(mmeResponse: MmeResponse) = Json.obj(
-      "queryId" -> mmeResponse.queryId,
-      "results" -> mmeResponse.mmeResults)
+      "results" -> mmeResponse.results)
   }
 
   implicit val typeInfoReads: Reads[TypeInfo] = (

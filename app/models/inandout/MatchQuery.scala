@@ -3,7 +3,7 @@ package models.inandout
 case class MatchQuery(patient: Patient)
 case class Patient(id: String, label: Option[String], contact: Contact, species: Option[String],
                    sex: Option[String], ageOfOnset: Option[String], inheritanceMode: Option[String],
-                   disorders: Option[List[Disorder]], features: List[Feature], genomicFeatures: List[GenomicFeature])
+                   disorders: Option[List[Disorder]], features: Option[List[Feature]], genomicFeatures: Option[List[GenomicFeature]])
 case class Contact(name: String, institution: Option[String], href: String)
 case class Disorder(id: String)
 case class Feature(id: String, observed: String, ageOfOnset: String)

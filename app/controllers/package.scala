@@ -131,8 +131,8 @@ package object controllers {
     (JsPath \ "ageOfOnset").read[Option[String]] and
     (JsPath \ "inheritanceMode").read[Option[String]] and
     (JsPath \ "disorders").read[Option[List[Disorder]]] and
-    (JsPath \ "features").read[List[Feature]] and
-    (JsPath \ "genomicFeatures").read[List[GenomicFeature]])(Patient.apply _)
+    (JsPath \ "features").read[Option[List[Feature]]] and
+    (JsPath \ "genomicFeatures").read[Option[List[GenomicFeature]]])(Patient.apply _)
 
   implicit val matchQueryReads: Reads[MatchQuery] = (
     (JsPath \ "patient").read[Patient]).map(MatchQuery.apply _)

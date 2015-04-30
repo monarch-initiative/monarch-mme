@@ -14,17 +14,16 @@ import models.inandout._
 
 object Application extends Controller {
 
-  val concurrentMap = new scala.collection.concurrent.TrieMap[String, String]
-
   def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+    Ok(views.html.index())
   }
 
   def mmeMatch() = Action(BodyParsers.parse.json) {
     implicit request =>
-      println(request.acceptedTypes)
+      println(request.acceptedTypes.map(_.toString))
       println(request.body)
-      // TODO check accepted types
+      // TODO check Accept
+      // TODO check X-Auth-Token
       val matchQuery = request.body.validate[MatchQuery]
 
       matchQuery.fold(
@@ -33,8 +32,13 @@ object Application extends Controller {
         },
         matchQueryObj => {
           // TODO check feature or genomicFeatures
-          val onlyIds = Seq.empty
-          Ok(MmeRequester.fetch("noQueryId", onlyIds))
+          val featuresOpt = matchQueryObj.patient.features
+          if (featuresOpt.isDefined) {
+            val onlyIds = featuresOpt.get.map(_.id)
+            Ok(MmeRequester.fetch("noQueryId", onlyIds))
+          } else {
+            Ok("") // TODO
+          }
         })
   }
 

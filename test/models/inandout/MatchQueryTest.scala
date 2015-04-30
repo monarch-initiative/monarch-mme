@@ -84,6 +84,7 @@ class MatchQueryTest extends Specification {
       val json: JsValue = Json.parse(input)
       checkJsResult(json.validate[GenomicFeature])
     }
+    
     "successfully parse Feature" in {
       val input: String = """
         {
@@ -95,6 +96,7 @@ class MatchQueryTest extends Specification {
       val json: JsValue = Json.parse(input)
       checkJsResult(json.validate[Feature])
     }
+    
     "successfully parse Disorder" in {
       val input: String = """
         {
@@ -105,6 +107,7 @@ class MatchQueryTest extends Specification {
       val json: JsValue = Json.parse(input)
       checkJsResult(json.validate[Disorder])
     }
+    
     "successfully parse Patient" in {
       val input: String = """
         {

@@ -13,65 +13,55 @@ import play.api.libs.functional.syntax._
 
 package object controllers {
 
-  implicit val typeInfoWrites = new Writes[TypeInfo] {
-    def writes(typeInfo: TypeInfo) = Json.obj(
-      "id" -> typeInfo.id,
-      "label" -> typeInfo.label)
-  }
-  implicit val variantWrites = new Writes[Variant] {
-    def writes(variant: Variant) = Json.obj(
-      "assembly" -> variant.assembly,
-      "referenceName" -> variant.referenceName,
-      "start" -> variant.start,
-      "end" -> variant.end,
-      "referenceBases" -> variant.referenceBases,
-      "alternateBases" -> variant.alternateBases)
-  }
+  implicit val typeInfoWrites: Writes[TypeInfo] = (
+    (JsPath \ "id").write[String] and
+    (JsPath \ "label").writeNullable[String])(unlift(TypeInfo.unapply))
+
+  implicit val variantWrites: Writes[Variant] = (
+    (JsPath \ "assembly").write[String] and
+    (JsPath \ "referenceName").write[String] and
+    (JsPath \ "start").write[Int] and
+    (JsPath \ "end").writeNullable[Int] and
+    (JsPath \ "referenceBases").writeNullable[String] and
+    (JsPath \ "alternateBases").writeNullable[String])(unlift(Variant.unapply))
+
   implicit val geneWrites = new Writes[Gene] {
     def writes(gene: Gene) = Json.obj(
       "id" -> gene.id)
   }
 
-  implicit val genomicFeatureWrites = new Writes[GenomicFeature] {
-    def writes(genomicFeature: GenomicFeature) = Json.obj(
-      "gene" -> genomicFeature.gene,
-      "variant" -> genomicFeature.variant,
-      "zygosity" -> genomicFeature.zygosity,
-      "type" -> genomicFeature.typeInfo)
-  }
+  implicit val genomicFeatureWrites: Writes[GenomicFeature] = (
+    (JsPath \ "gene").write[Gene] and
+    (JsPath \ "variant").writeNullable[Variant] and
+    (JsPath \ "zygosity").writeNullable[Int] and
+    (JsPath \ "type").write[TypeInfo])(unlift(GenomicFeature.unapply))
 
-  implicit val featureWrites = new Writes[Feature] {
-    def writes(feature: Feature) = Json.obj(
-      "id" -> feature.id,
-      "observed" -> feature.observed,
-      "label" -> feature.label)
-  }
+  implicit val featureWrites: Writes[Feature] = (
+    (JsPath \ "id").write[String] and
+    (JsPath \ "observed").writeNullable[String] and
+    (JsPath \ "ageOfOnset").writeNullable[String])(unlift(Feature.unapply))
 
   implicit val disorderWrites = new Writes[Disorder] {
     def writes(disorder: Disorder) = Json.obj(
       "id" -> disorder.id)
   }
 
-  implicit val contactWrites = new Writes[Contact] {
-    def writes(contact: Contact) = Json.obj(
-      "name" -> contact.name,
-      "institution" -> contact.institution,
-      "href" -> contact.href)
-  }
+  implicit val contactWrites: Writes[Contact] = (
+    (JsPath \ "name").write[String] and
+    (JsPath \ "institution").writeNullable[String] and
+    (JsPath \ "href").write[String])(unlift(Contact.unapply))
 
-  implicit val patientWrites = new Writes[Patient] {
-    def writes(patient: Patient) = Json.obj(
-      "id" -> patient.id,
-      "label" -> patient.label,
-      "contact" -> patient.contact,
-      "species" -> patient.species,
-      "sex" -> patient.sex,
-      "ageOfOnset" -> patient.ageOfOnset,
-      "inheritanceMode" -> patient.inheritanceMode,
-      "disorders" -> patient.disorders,
-      "features" -> patient.features,
-      "genomicFeatures" -> patient.genomicFeatures)
-  }
+  implicit val patientWrites: Writes[Patient] = (
+    (JsPath \ "id").write[String] and
+    (JsPath \ "label").writeNullable[String] and
+    (JsPath \ "contact").write[Contact] and
+    (JsPath \ "species").writeNullable[String] and
+    (JsPath \ "sex").writeNullable[String] and
+    (JsPath \ "ageOfOnset").writeNullable[String] and
+    (JsPath \ "inheritanceMode").writeNullable[String] and
+    (JsPath \ "disorders").writeNullable[List[Disorder]] and
+    (JsPath \ "features").writeNullable[List[Feature]] and
+    (JsPath \ "genomicFeatures").writeNullable[List[GenomicFeature]])(unlift(Patient.unapply))
 
   implicit val scoreWrites = new Writes[PatientScore] {
     def writes(patientScore: PatientScore) = Json.obj(
@@ -84,8 +74,8 @@ package object controllers {
       "patient" -> result.patient)
   }
 
-  implicit val mmeResponseWrites = new Writes[MmeResponse] {
-    def writes(mmeResponse: MmeResponse) = Json.obj(
+  implicit val mmeResponseWrites = new Writes[MatchResult] {
+    def writes(mmeResponse: MatchResult) = Json.obj(
       "results" -> mmeResponse.results)
   }
 
@@ -112,8 +102,8 @@ package object controllers {
 
   implicit val featureReads: Reads[Feature] = (
     (JsPath \ "id").read[String] and
-    (JsPath \ "observed").read[String] and
-    (JsPath \ "label").read[String])(Feature.apply _)
+    (JsPath \ "observed").readNullable[String] and
+    (JsPath \ "ageOfOnset").readNullable[String])(Feature.apply _)
 
   implicit val disorderReads: Reads[Disorder] = (
     (JsPath \ "id").read[String]).map(Disorder.apply _)

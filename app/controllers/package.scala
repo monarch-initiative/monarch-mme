@@ -4,11 +4,12 @@ import play.api.Play.current
 import play.api.libs.ws._
 import scala.concurrent._
 import scala.concurrent.duration._
-import play.api.libs.json._
 import akka.actor.Props
-import play.api.libs.functional.syntax._
 import play.api.libs.concurrent.Akka
 import models.inandout._
+import play.api.libs.json._
+import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
 
 package object controllers {
 
@@ -43,7 +44,7 @@ package object controllers {
     def writes(feature: Feature) = Json.obj(
       "id" -> feature.id,
       "observed" -> feature.observed,
-      "ageOfOnset" -> feature.ageOfOnset)
+      "label" -> feature.label)
   }
 
   implicit val disorderWrites = new Writes[Disorder] {
@@ -90,49 +91,49 @@ package object controllers {
 
   implicit val typeInfoReads: Reads[TypeInfo] = (
     (JsPath \ "id").read[String] and
-    (JsPath \ "label").read[Option[String]])(TypeInfo.apply _)
+    (JsPath \ "label").readNullable[String])(TypeInfo.apply _)
 
   implicit val variantReads: Reads[Variant] = (
     (JsPath \ "assembly").read[String] and
     (JsPath \ "referenceName").read[String] and
     (JsPath \ "start").read[Int] and
-    (JsPath \ "end").read[Option[Int]] and
-    (JsPath \ "referenceBases").read[Option[String]] and
-    (JsPath \ "alternateBases").read[Option[String]])(Variant.apply _)
+    (JsPath \ "end").readNullable[Int] and
+    (JsPath \ "referenceBases").readNullable[String] and
+    (JsPath \ "alternateBases").readNullable[String])(Variant.apply _)
 
   implicit val geneReads: Reads[Gene] = (
     (JsPath \ "id").read[String]).map(Gene.apply _)
 
   implicit val genomicFeatureReads: Reads[GenomicFeature] = (
     (JsPath \ "gene").read[Gene] and
-    (JsPath \ "variant").read[Option[Variant]] and
-    (JsPath \ "zygosity").read[Option[Int]] and
+    (JsPath \ "variant").readNullable[Variant] and
+    (JsPath \ "zygosity").readNullable[Int] and
     (JsPath \ "type").read[TypeInfo])(GenomicFeature.apply _)
 
   implicit val featureReads: Reads[Feature] = (
     (JsPath \ "id").read[String] and
     (JsPath \ "observed").read[String] and
-    (JsPath \ "ageOfOnset").read[String])(Feature.apply _)
+    (JsPath \ "label").read[String])(Feature.apply _)
 
   implicit val disorderReads: Reads[Disorder] = (
     (JsPath \ "id").read[String]).map(Disorder.apply _)
 
   implicit val contactReads: Reads[Contact] = (
     (JsPath \ "name").read[String] and
-    (JsPath \ "institution").read[Option[String]] and
+    (JsPath \ "institution").readNullable[String] and
     (JsPath \ "href").read[String])(Contact.apply _)
 
   implicit val patientReads: Reads[Patient] = (
     (JsPath \ "id").read[String] and
-    (JsPath \ "label").read[Option[String]] and
+    (JsPath \ "label").readNullable[String] and
     (JsPath \ "contact").read[Contact] and
-    (JsPath \ "species").read[Option[String]] and
-    (JsPath \ "sex").read[Option[String]] and
-    (JsPath \ "ageOfOnset").read[Option[String]] and
-    (JsPath \ "inheritanceMode").read[Option[String]] and
-    (JsPath \ "disorders").read[Option[List[Disorder]]] and
-    (JsPath \ "features").read[Option[List[Feature]]] and
-    (JsPath \ "genomicFeatures").read[Option[List[GenomicFeature]]])(Patient.apply _)
+    (JsPath \ "species").readNullable[String] and
+    (JsPath \ "sex").readNullable[String] and
+    (JsPath \ "ageOfOnset").readNullable[String] and
+    (JsPath \ "inheritanceMode").readNullable[String] and
+    (JsPath \ "disorders").readNullable[List[Disorder]] and
+    (JsPath \ "features").readNullable[List[Feature]] and
+    (JsPath \ "genomicFeatures").readNullable[List[GenomicFeature]])(Patient.apply _)
 
   implicit val matchQueryReads: Reads[MatchQuery] = (
     (JsPath \ "patient").read[Patient]).map(MatchQuery.apply _)

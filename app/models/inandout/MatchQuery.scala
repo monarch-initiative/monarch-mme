@@ -6,7 +6,7 @@ case class Patient(id: String, label: Option[String], contact: Contact, species:
                    disorders: Option[List[Disorder]], features: Option[List[Feature]], genomicFeatures: Option[List[GenomicFeature]])
 case class Contact(name: String, institution: Option[String], href: String)
 case class Disorder(id: String)
-case class Feature(id: String, observed: String, ageOfOnset: String)
+case class Feature(id: String, observed: String, label: String)
 case class GenomicFeature(gene: Gene, variant: Option[Variant], zygosity: Option[Int], typeInfo: TypeInfo)
 case class Gene(id: String)
 case class Variant(assembly: String, referenceName: String, start: Int, end: Option[Int],

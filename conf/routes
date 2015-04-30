@@ -3,9 +3,8 @@
 # ~~~~
 
 # Home page
-GET    /                        controllers.Application.index
-POST   /mmapi/v1/matchResults   controllers.Application.matchResults
-POST   /mmapi/v1/match          controllers.Application.mmeMatch
+GET    /               controllers.Application.index
+POST   /match          controllers.Application.mmeMatch
 
 # Map static resources from the /public folder to the /assets URL path
-GET    /assets/*file            controllers.Assets.at(path="/public", file)
+GET    /assets/*file   controllers.Assets.at(path="/public", file)

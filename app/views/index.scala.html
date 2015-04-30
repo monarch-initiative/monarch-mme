@@ -7,6 +7,18 @@
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
     </head>
     <body>
-        bla bla bla
+        <p>Welcome to the Monarch Initiative MatchMaker Exchange API!</p>
+        <p>To find out more:
+            <ul>
+                <li><a href="http://monarchinitiaitive.org">Monarch Initiative WebSite</a></li>
+                <li><a href="https://github.com/MatchMakerExchange/mme-apis">MatchMaker Exchange API specification</a></li>
+            </ul>
+        </p>
+        <p>
+            To test this service:
+            <pre>
+            curl -XPOST 'mme.monarchinitiaitive.org:9000/match' -H 'Content-type:application/json' -H 'Accept: application/vnd.ga4gh.matchmaker.v6.6+json' -d 'JSON-QUERY-HERE'
+            </pre>
+        </p>
     </body>
 </html>

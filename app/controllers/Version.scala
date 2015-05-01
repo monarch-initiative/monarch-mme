@@ -10,7 +10,7 @@ object Version {
     } else {
       val (major, minor) = userVersion.apply(0).get
       val (serverMajor, serverMinor) = extractMajorMinorVersion(version).get
-      ApiVersionComptabilityCheck(major, minor, serverMajor, serverMinor)
+      apiVersionComptabilityCheck(major, minor, serverMajor, serverMinor)
     }
   }
 
@@ -23,7 +23,7 @@ object Version {
     }
   }
 
-  def ApiVersionComptabilityCheck(userMajor: Int, userMinor: Int, serverMajor: Int, serverMinor: Int): Boolean = {
+  def apiVersionComptabilityCheck(userMajor: Int, userMinor: Int, serverMajor: Int, serverMinor: Int): Boolean = {
     userMajor == serverMajor && userMinor <= serverMinor
   }
 }

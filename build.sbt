@@ -11,5 +11,5 @@ libraryDependencies ++= Seq(
   anorm,
   cache,
   ws,
-  "org.specs2" %% "specs2" % "2.4.15" % "test"
+  "org.specs2" %% "specs2" % "2.3.11" % "test"
 )

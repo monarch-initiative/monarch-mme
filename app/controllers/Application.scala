@@ -20,26 +20,34 @@ object Application extends Controller {
 
   def mmeMatch() = Action(BodyParsers.parse.json) {
     implicit request =>
-      println(request.acceptedTypes.map(_.toString))
-      println(request.body)
-      // TODO check Accept
-      // TODO check X-Auth-Token
-      val matchQuery = request.body.validate[MatchQuery]
+      val compatible = Version.checkAcceptedVersion(request.acceptedTypes.map(_.toString).toList)
 
-      matchQuery.fold(
-        errors => {
-          BadRequest(Json.obj("status" -> "Bad Request", "message" -> JsError.toFlatJson(errors)))
-        },
-        matchQueryObj => {
-          // TODO check feature or genomicFeatures
-          val featuresOpt = matchQueryObj.patient.features
-          if (featuresOpt.isDefined) {
-            val onlyIds = featuresOpt.get.map(_.id)
-            Ok(MmeRequester.fetch("noQueryId", onlyIds))
-          } else {
-            Ok("") // TODO
-          }
-        })
+      if (compatible) {
+
+        // TODO check X-Auth-Token
+        val matchQuery = request.body.validate[MatchQuery]
+
+        matchQuery.fold(
+          errors => {
+            BadRequest(Json.obj("status" -> "Bad Request", "message" -> JsError.toFlatJson(errors)))
+          },
+          matchQueryObj => {
+            if (matchQueryObj.patient.features.isDefined && matchQueryObj.patient.genomicFeatures.isDefined) {
+              val featuresOpt = matchQueryObj.patient.features
+              if (featuresOpt.isDefined) {
+                val onlyIds = featuresOpt.get.map(_.id)
+                Ok(MmeRequester.fetch("noQueryId", onlyIds))
+              } else {
+                Ok("") // TODO
+              }
+            }else{
+              BadRequest("genomicFeatures and features are both empty.")
+            }
+          })
+
+      } else {
+        NotAcceptable(s"Can't find version in header or incompatible version provided")
+      }
   }
 
 }

@@ -30,8 +30,31 @@ class VersionTest extends Specification with ScalaCheck {
     }
 
   }
-  
+
+  "extractMajorMinorVersion" should {
+    "successfully extract version" in {
+      val versionOpt = Version.extractMajorMinorVersion("application/vnd.ga4gh.matchmaker.v0.7+json")
+      versionOpt.isDefined === true
+      versionOpt.get._1 === 0
+      versionOpt.get._2 === 7
+    }
+    "not find any version" in {
+      val versionOpt = Version.extractMajorMinorVersion("hellokitty")
+      versionOpt.isDefined == false
+    }
+  }
+
   "checkAcceptedVersion" should {
-    
+    "not find version in empty header" in {
+      Version.checkAcceptedVersion(List.empty) must beFalse
+    }
+
+    "find version in provided header" in {
+      Version.checkAcceptedVersion(List(Version.version)) must beTrue
+    }
+
+    "find version with many headers" in {
+      Version.checkAcceptedVersion(List(Version.version, "hellokitty", "batman")) must beTrue
+    }
   }
 }

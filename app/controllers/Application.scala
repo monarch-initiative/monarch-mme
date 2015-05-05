@@ -15,7 +15,7 @@ import models.inandout._
 object Application extends Controller {
 
   def index = Action {
-    Ok(views.html.index())
+    Ok(views.html.index(Version.version))
   }
 
   def mmeMatch() = Action(BodyParsers.parse.json) {

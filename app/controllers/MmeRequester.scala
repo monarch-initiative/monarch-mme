@@ -25,33 +25,23 @@ object MmeRequester {
 
     val seqResults = Await.result(futureResults, 120 seconds)
 
-    val features: List[Feature] = seqResults.map(r => {
+    val results: List[models.inandout.Result] = seqResults.map(r => {
 
-//      val id = (r \ "j" \ "id").as[String]
-//      val label = (r \ "j" \ "label").as[String] 
-      
-        (r \\ "b").map(x => {
-          Feature((x \ "id").as[String], Some("yes"), Some((x \ "label").as[String]))
-        
+      val patientId = (r \ "j" \ "id").as[String]
+      val patientLabel = (r \ "j" \ "label").as[String]
+      val patientScore = (r \ "combinedScore").as[Double]
+
+      val features = (r \ "matches").as[Seq[JsValue]].map(m => {
+        Feature((m \ "b" \ "id").as[String], Some("yes"), None, Some((m \ "b" \ "label").as[String]))
       }).toList
-    }).toList.flatten
 
-    //    val idAndLabel: Seq[(String, String)] = seqMatches.map(m => {
-    //      val ids = (m \\ "id").map(_.as[String])
-    //      val labels = (m \\ "label").map(_.as[String])
-    //      ids zip labels
-    //    }).flatten
-    //
-    //    val mmeResults = idAndLabel.map(_ match {
-    //      case (id, label) => MmeResult(id, label)
-    //    })
+      val contact = Contact("ratatouille", None, "http://ratatouille.org")
+      val patient = Patient(patientId, Some(patientLabel), contact = contact, features = Some(features))
 
-    val contact = Contact("batman", None, "http://batman.org")
-    val patient = Patient("Superman007", contact = contact, features = Some(features))
-    val patientScore = PatientScore(5)
-    val result = models.inandout.Result(patientScore, patient)
+      models.inandout.Result(PatientScore(patientScore), patient)
+    }).toList
 
-    val mmeResponse = MatchResult(List(result))
+    val mmeResponse = MatchResult(results)
 
     Json.stringify(Json.toJson(mmeResponse))
   }

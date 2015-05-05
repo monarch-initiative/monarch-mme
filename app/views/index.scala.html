@@ -1,3 +1,4 @@
+@(currentVersion: String)
 <!DOCTYPE html>
 
 <html>
@@ -17,7 +18,7 @@
         <p>
             To test this service:
             <pre>
-            curl -XPOST 'mme.monarchinitiaitive.org:9000/match' -H 'Content-type:application/json' -H 'Accept: application/vnd.ga4gh.matchmaker.v6.6+json' -d 'JSON-QUERY-HERE'
+            curl -XPOST 'mme.monarchinitiaitive.org:9000/match' -H 'Content-type:application/json' -H 'Accept: @currentVersion' -d 'JSON-QUERY-HERE'
             </pre>
         </p>
     </body>

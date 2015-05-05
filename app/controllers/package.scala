@@ -39,7 +39,8 @@ package object controllers {
   implicit val featureWrites: Writes[Feature] = (
     (JsPath \ "id").write[String] and
     (JsPath \ "observed").writeNullable[String] and
-    (JsPath \ "ageOfOnset").writeNullable[String])(unlift(Feature.unapply))
+    (JsPath \ "ageOfOnset").writeNullable[String] and
+    (JsPath \ "label").writeNullable[String])(unlift(Feature.unapply))
 
   implicit val disorderWrites = new Writes[Disorder] {
     def writes(disorder: Disorder) = Json.obj(
@@ -103,7 +104,8 @@ package object controllers {
   implicit val featureReads: Reads[Feature] = (
     (JsPath \ "id").read[String] and
     (JsPath \ "observed").readNullable[String] and
-    (JsPath \ "ageOfOnset").readNullable[String])(Feature.apply _)
+    (JsPath \ "ageOfOnset").readNullable[String] and
+    (JsPath \ "label").readNullable[String])(Feature.apply _)
 
   implicit val disorderReads: Reads[Disorder] = (
     (JsPath \ "id").read[String]).map(Disorder.apply _)

@@ -36,17 +36,17 @@ object Application extends Controller {
               val featuresOpt = matchQueryObj.patient.features
               if (featuresOpt.isDefined) {
                 val onlyIds = featuresOpt.get.map(_.id)
-                Ok(MmeRequester.fetch("noQueryId", onlyIds))
+                Ok(MmeRequester.fetch("noQueryId", onlyIds)).withHeaders("Content-Type" -> Version.version)
               } else {
-                Ok("") // TODO
+                Ok("").withHeaders("Content-Type" -> Version.version) // TODO
               }
             }else{
-              BadRequest("genomicFeatures and features are both empty.")
+              BadRequest("genomicFeatures and features are both empty.").withHeaders("Content-Type" -> Version.version)
             }
           })
 
       } else {
-        NotAcceptable(s"Can't find version in header or incompatible version provided")
+        NotAcceptable(s"Can't find version in header or incompatible version provided").withHeaders("Content-Type" -> Version.version)
       }
   }
 

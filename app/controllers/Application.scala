@@ -22,7 +22,7 @@ object Application extends Controller {
     implicit request =>
       val compatible = Version.checkAcceptedVersion(request.acceptedTypes.map(_.toString).toList)
 
-      if (compatible) {
+      val response = if (compatible) {
 
         // TODO check X-Auth-Token
         val matchQuery = request.body.validate[MatchQuery]
@@ -36,18 +36,18 @@ object Application extends Controller {
               val featuresOpt = matchQueryObj.patient.features
               if (featuresOpt.isDefined) {
                 val onlyIds = featuresOpt.get.map(_.id)
-                Ok(MmeRequester.fetch("noQueryId", onlyIds)).withHeaders("Content-Type" -> Version.version)
+                Ok(MmeRequester.fetch("noQueryId", onlyIds))
               } else {
-                Ok("").withHeaders("Content-Type" -> Version.version) // TODO
+                NotImplemented("genomicFeatures not implemented.") // TODO
               }
-            }else{
-              BadRequest("genomicFeatures and features are both empty.").withHeaders("Content-Type" -> Version.version)
+            } else {
+              BadRequest("genomicFeatures and features are both empty.")
             }
           })
-
       } else {
-        NotAcceptable(s"Can't find version in header or incompatible version provided").withHeaders("Content-Type" -> Version.version)
+        NotAcceptable(s"Can't find version in header or incompatible version provided")
       }
+      response.withHeaders("Content-Type" -> Version.version)
   }
 
 }

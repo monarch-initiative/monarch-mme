@@ -1,7 +1,7 @@
 package controllers
 
 object Version {
-  def version = "application/vnd.ga4gh.matchmaker.v0.7+json"
+  def version = "application/vnd.ga4gh.matchmaker.v1.0+json"
 
   def checkAcceptedVersion(accepts: List[String]): Boolean = {
     val userVersion = accepts.map(extractMajorMinorVersion).filter(_.isDefined)

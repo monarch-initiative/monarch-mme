@@ -34,7 +34,7 @@ package object controllers {
     (JsPath \ "gene").write[Gene] and
     (JsPath \ "variant").writeNullable[Variant] and
     (JsPath \ "zygosity").writeNullable[Int] and
-    (JsPath \ "type").write[TypeInfo])(unlift(GenomicFeature.unapply))
+    (JsPath \ "type").writeNullable[TypeInfo])(unlift(GenomicFeature.unapply))
 
   implicit val featureWrites: Writes[Feature] = (
     (JsPath \ "id").write[String] and
@@ -99,7 +99,7 @@ package object controllers {
     (JsPath \ "gene").read[Gene] and
     (JsPath \ "variant").readNullable[Variant] and
     (JsPath \ "zygosity").readNullable[Int] and
-    (JsPath \ "type").read[TypeInfo])(GenomicFeature.apply _)
+    (JsPath \ "type").readNullable[TypeInfo])(GenomicFeature.apply _)
 
   implicit val featureReads: Reads[Feature] = (
     (JsPath \ "id").read[String] and

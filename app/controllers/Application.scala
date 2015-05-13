@@ -23,8 +23,6 @@ object Application extends Controller {
       val compatible = Version.checkAcceptedVersion(request.acceptedTypes.map(_.toString).toList)
 
       val response = if (compatible) {
-
-        // TODO check X-Auth-Token
         val matchQuery = request.body.validate[MatchQuery]
 
         matchQuery.fold(
@@ -32,16 +30,20 @@ object Application extends Controller {
             BadRequest(Json.obj("status" -> "Bad Request", "message" -> JsError.toFlatJson(errors)))
           },
           matchQueryObj => {
-            if (matchQueryObj.patient.features.isDefined && matchQueryObj.patient.genomicFeatures.isDefined) {
+            if (matchQueryObj.patient.features.isDefined || matchQueryObj.patient.genomicFeatures.isDefined) {
               val featuresOpt = matchQueryObj.patient.features
               if (featuresOpt.isDefined) {
-                val onlyIds = featuresOpt.get.map(_.id)
-                Ok(MmeRequester.fetch("noQueryId", onlyIds))
+                if (!featuresOpt.get.isEmpty) {
+                  val onlyIds = featuresOpt.get.map(_.id)
+                  Ok(MmeRequester.fetch("noQueryId", onlyIds))
+                } else {
+                  BadRequest("features can't be empty.")
+                }
               } else {
-                NotImplemented("genomicFeatures not implemented.") // TODO
+                NotImplemented("genomicFeatures not implemented on this server.")
               }
             } else {
-              BadRequest("genomicFeatures and features are both empty.")
+              BadRequest("genomicFeatures and features are both undefined.")
             }
           })
       } else {

@@ -12,7 +12,7 @@ import models.inandout._
 
 object MmeRequester {
   def fetch(queryId: String, ids: Seq[String]): String = {
-    val url = "http://tartini.crbs.ucsd.edu/analyze/phenotypes.json/?input_items=" + ids.mkString("+")
+    val url = "http://tartini.crbs.ucsd.edu/analyze/phenotypes.json?input_items=" + ids.mkString("+")
 
     implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
 

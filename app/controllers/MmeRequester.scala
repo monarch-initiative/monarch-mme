@@ -35,7 +35,7 @@ object MmeRequester {
         Feature((m \ "b" \ "id").as[String], Some("yes"), None, Some((m \ "b" \ "label").as[String]))
       }).toList
 
-      val contact = Contact("ratatouille", None, "http://ratatouille.org")
+      val contact = Contact("Monarch Initiative", None, "mailto:info@monarchinitiative.org")
       val patient = Patient(patientId, Some(patientLabel), contact = contact, features = Some(features))
 
       models.inandout.Result(PatientScore(patientScore), patient)

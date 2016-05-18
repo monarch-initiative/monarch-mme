@@ -18,7 +18,8 @@ object Application extends Controller {
     Ok(views.html.index(Version.version))
   }
 
-  def mmeMatch() = Action(BodyParsers.parse.json) {
+  def mmeMatch() = Action.async(BodyParsers.parse.json) {
+    implicit val executionContext = play.api.libs.concurrent.Execution.defaultContext
     implicit request =>
       val compatible = Version.checkAcceptedVersion(request.acceptedTypes.map(_.toString).toList)
 
@@ -27,7 +28,7 @@ object Application extends Controller {
 
         matchQuery.fold(
           errors => {
-            BadRequest(Json.obj("status" -> "Bad Request", "message" -> JsError.toFlatJson(errors)))
+            Future(BadRequest(Json.obj("status" -> "Bad Request", "message" -> JsError.toFlatJson(errors))))
           },
           matchQueryObj => {
             if (matchQueryObj.patient.features.isDefined || matchQueryObj.patient.genomicFeatures.isDefined) {
@@ -35,21 +36,21 @@ object Application extends Controller {
               if (featuresOpt.isDefined) {
                 if (!featuresOpt.get.isEmpty) {
                   val onlyIds = featuresOpt.get.map(_.id)
-                  Ok(MmeRequester.fetch("noQueryId", onlyIds))
+                  MmeRequester.fetch("noQueryId", onlyIds).map(Ok(_))
                 } else {
-                  BadRequest("features can't be empty.")
+                  Future(BadRequest("features can't be empty."))
                 }
               } else {
-                NotImplemented("genomicFeatures not implemented on this server.")
+                Future(NotImplemented("genomicFeatures not implemented on this server."))
               }
             } else {
-              BadRequest("genomicFeatures and features are both undefined.")
+              Future(BadRequest("genomicFeatures and features are both undefined."))
             }
           })
       } else {
-        NotAcceptable(s"Can't find version in header or incompatible version provided")
+        Future(NotAcceptable(s"Can't find version in header or incompatible version provided"))
       }
-      response.withHeaders("Content-Type" -> Version.version)
+      response.map(_.withHeaders("Content-Type" -> Version.version))
   }
 
 }

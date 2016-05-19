@@ -24,7 +24,7 @@ class ServerRequestTest extends PlaySpecification with Results {
       val result = call(Application.mmeMatch, request)
 
       status(result) mustEqual 406 // NotAcceptable
-      contentAsString(result) mustEqual "Can't find version in header or incompatible version provided"
+      contentAsString(result) mustEqual "Can't find version in header or incompatible version provided."
     }
 
     "refuse requests without features and genomicFeatures defined" in {
@@ -34,6 +34,7 @@ class ServerRequestTest extends PlaySpecification with Results {
 
       val request = FakeRequest(POST, "/")
         .withHeaders("Accept" -> Version.version)
+        .withHeaders("Content-type" -> Version.version)
         .withJsonBody(Json.parse("""
           {"patient" : {
             "contact": {
@@ -61,6 +62,7 @@ class ServerRequestTest extends PlaySpecification with Results {
 
       val request = FakeRequest(POST, "/")
         .withHeaders("Accept" -> Version.version)
+        .withHeaders("Content-type" -> Version.version)
         .withJsonBody(Json.parse("""
           {"patient" : {
             "contact": {
@@ -89,6 +91,7 @@ class ServerRequestTest extends PlaySpecification with Results {
 
       val request = FakeRequest(POST, "/")
         .withHeaders("Accept" -> Version.version)
+        .withHeaders("Content-type" -> Version.version)
         .withJsonBody(Json.parse("""
           {"patient" : {
             "contact": {

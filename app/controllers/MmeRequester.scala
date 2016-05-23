@@ -31,7 +31,7 @@ object MmeRequester {
 
         val patientId = (r \ "j" \ "id").as[String]
         val patientLabel = (r \ "j" \ "label").as[String]
-        val patientScore = (r \ "combinedScore").as[Double]
+        val patientScore = (r \ "combinedScore").as[Double] / 100
 
         val features = (r \ "matches").as[Seq[JsValue]].map(m => {
           Feature((m \ "b" \ "id").as[String], Some("yes"), None, Some((m \ "b" \ "label").as[String]))

@@ -7,19 +7,35 @@
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
     </head>
-    <body>
-        <p>Welcome to the Monarch Initiative MatchMaker Exchange API!</p>
-        <p>To find out more:
-            <ul>
-                <li><a href="http://monarchinitiative.org">Monarch Initiative WebSite</a></li>
-                <li><a href="https://github.com/MatchMakerExchange/mme-apis">MatchMaker Exchange API specification</a></li>
-            </ul>
-        </p>
-        <p>
-            To test this service:
-            <pre>
-            curl -XPOST 'https://mme.monarchinitiative.org/match' -H 'Content-type:application/json' -H 'Accept: @currentVersion' -d 'JSON-QUERY-HERE'
-            </pre>
-        </p>
+    <body
+        style="background:azure;padding:5px;">
+        <img
+            style="margin:50px;max-height:200px;display:block;margin:auto;"
+            src="@routes.Assets.at("images/monarch-logo-black-stacked.png")"/>
+
+        <br>
+        <br>
+        <hr>
+        <br>
+
+        <h2 style="text-align:center;">Welcome to the Monarch Initiative MatchMaker Exchange API</h2>
+        <div style="border:5px solid lightgray;border-radius:10px;background:white;padding:10px;">
+            <h3>
+                <a target="_blank" href="https://monarchinitiative.org">Monarch Initiative Web Portal</a>
+            </h3>
+
+            <h3>
+                <a target="_blank" href="https://github.com/MatchMakerExchange/mme-apis">MatchMaker Exchange API specification</a>
+            </h3>
+
+            <h3>Testing the MME Service</h3>
+<pre>
+curl -XPOST \
+    'https://mme.monarchinitiative.org/match' \
+    -H 'Content-type:application/json' \
+    -H 'Accept: @currentVersion' \
+    -d 'JSON-QUERY-HERE'
+</pre>
+        </div>
     </body>
 </html>

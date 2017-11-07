@@ -12,7 +12,7 @@ import models.inandout._
 
 object MmeRequester {
   def fetch(queryId: String, ids: Seq[String]): Future[String] = {
-    val url = "http://monarch5-1.cslu.ohsu.edu/analyze/phenotypes.json?input_items=" + ids.mkString("+")
+    val url = "http://owlsim.monarchinitiative.org/analyze/phenotypes.json?input_items=" + ids.mkString("+")
 
     implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
 
